@@ -5,7 +5,7 @@ from DataProcessor import DataProcessor
 from random import *
 import numpy as np
 
-randBinList = lambda n: [randint(0,1) for b in range(1,n+1)]
+randBinList = lambda n: [randint(0,9) for b in range(1,n+1)]
 
 class MainController(object):
 

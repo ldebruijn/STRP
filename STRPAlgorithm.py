@@ -13,12 +13,11 @@ class STRPAlgorithm(object):
 		self.estimator = KMeans(init='k-means++', n_clusters=n_clusters)
 
 	def run(self, data):
-		# Only reduce data when visualising. Disable this in production.
 		reduced_data = PCA(n_components=2).fit_transform(data)
 
 		self.estimator.fit_transform(reduced_data)
 		# Enable visualising when debugging
-		# self.visualize(reduced_data)
+		self.visualize(reduced_data)
 
 	def visualize(self, reduced_data):
 		# Step size of the mesh. Decrease to increase the quality of the VQ.
