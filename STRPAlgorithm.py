@@ -17,7 +17,15 @@ class STRPAlgorithm(object):
 
 		self.estimator.fit_transform(reduced_data)
 		# Enable visualising when debugging
+		print(self.estimator.cluster_centers_)
+		print(self.estimator.labels_)
+		print(self.estimator.inertia_)
+		self.get_node_positions(reduced_data)
 		self.visualize(reduced_data)
+
+	def get_node_positions(self, reduced_data):
+		print(reduced_data[:, 0], reduced_data[:, 1])
+		return reduced_data[:, 0], reduced_data[:, 1]
 
 	def visualize(self, reduced_data):
 		# Step size of the mesh. Decrease to increase the quality of the VQ.
@@ -33,6 +41,7 @@ class STRPAlgorithm(object):
 
 		# Put the result into a color plot
 		Z = Z.reshape(xx.shape)
+		
 		plt.figure(1)
 		plt.clf()
 		plt.imshow(Z, interpolation='nearest',
