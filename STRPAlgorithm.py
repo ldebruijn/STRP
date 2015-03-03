@@ -24,7 +24,7 @@ class STRPAlgorithm(object):
 		self.visualize(reduced_data)
 
 	def get_node_positions(self, reduced_data):
-		print(reduced_data[:, 0], reduced_data[:, 1])
+		print(reduced_data)
 		return reduced_data[:, 0], reduced_data[:, 1]
 
 	def visualize(self, reduced_data):
