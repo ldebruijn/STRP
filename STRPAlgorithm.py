@@ -11,20 +11,36 @@ class STRPAlgorithm(object):
 	def __init__(self, n_clusters=10):
 		self.n_clusters = n_clusters
 		self.estimator = KMeans(init='k-means++', n_clusters=n_clusters)
+		self.centroids = None 
+		self.node_positions = None
+		self.labels = None
+
+	def adjust_n_clusters(self, n_clusters):
+		""" Re-initialize the estimator with an adjusted amount of clusters.
+			Doing it this way the other properties of the object will not change
+			while the amount of clusters can be adjusted.
+
+		"""
+		self.estimator = KMeans(init='k-means++', n_clusters=n_clusters)
 
 	def run(self, data):
 		reduced_data = PCA(n_components=2).fit_transform(data)
 
 		self.estimator.fit_transform(reduced_data)
-		# Enable visualising when debugging
-		print(self.estimator.cluster_centers_)
-		print(self.estimator.labels_)
-		print(self.estimator.inertia_)
+		self.centroids = self.estimator.cluster_centers_
+		self.node_positions = reduced_data
+		self.labels = self.estimator.labels_
+
+		# print(self.estimator.cluster_centers_)
+		# print(self.estimator.labels_)
+
 		self.get_node_positions(reduced_data)
+
+		# Enable visualising when debugging
 		self.visualize(reduced_data)
 
 	def get_node_positions(self, reduced_data):
-		print(reduced_data)
+		# print(reduced_data)
 		return reduced_data[:, 0], reduced_data[:, 1]
 
 	def visualize(self, reduced_data):
@@ -49,7 +65,7 @@ class STRPAlgorithm(object):
 		           cmap=plt.cm.Paired,
 		           aspect='auto', origin='lower')
 
-		plt.plot(reduced_data[:, 0], reduced_data[:, 1], 'k.', markersize=2)
+		plt.plot(reduced_data[:, 0], reduced_data[:, 1], 'k.', markersize=4)
 		# Plot the centroids as a white X
 		centroids = self.estimator.cluster_centers_
 		plt.scatter(centroids[:, 0], centroids[:, 1],
