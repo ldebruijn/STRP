@@ -27,8 +27,8 @@ class PredictionController(object):
 
 		self.max_absolute_treshold = 13
 		self.min_absolute_treshold = 5
-		self.max_percentual_treshold = 5
-		self.min_percentual_treshold = 1
+		self.max_percentual_treshold = .5
+		self.min_percentual_treshold = .1
 
 		self.is_running = False
 
@@ -46,6 +46,9 @@ class PredictionController(object):
 
 
 	def loop(self):
+		""" Main application loop.
+
+		"""
 		container = list()
 		last_iteration = datetime.now()
 		print('Application initialised')
@@ -53,6 +56,7 @@ class PredictionController(object):
 
 		container.clear()
 
+		# Create dummy data
 		for x in range(1, 15):
 			container.append(np.array(randBinList(10)))
 
@@ -61,6 +65,7 @@ class PredictionController(object):
 
 			if (last_iteration < datetime.now() - timedelta(seconds=1)):
 				print('iteration')
+				# Add a new entity to the test data to simulate movement
 				container.append(np.array(randBinList(10)))
 				data = np.asarray(container)
 				
@@ -78,19 +83,28 @@ class PredictionController(object):
 
 		algorithm = self.algorithms['current']
 		cluster_sizes = Counter(algorithm.labels)
+		total_size = len(self.algorithms['current'].labels)
 
 		print(cluster_sizes)
 
 		for cluster_label, cluster_size in cluster_sizes.items():
+			"""" Loop through each cluster size and check if the sizes of the cluster
+				 Exceed any thresholds we set. If they do, we take action by in- or decreasing
+				 the cluster sizes used by the algorithm.
 
+			"""
 			# If a cluster size is greater than the absolute threshold, increase cluster size by 1.
-			if (cluster_size > self.max_absolute_treshold):
+			if (cluster_size > self.max_absolute_treshold or 
+				cluster_size > (total_size * self.max_percentual_treshold)):
+				print(total_size, (total_size * self.max_percentual_treshold))
 				print('increasing cluster size!')
 				self.adjust_n_clusters(+1)
 				break
 			
 			# If a cluster size is less than the absolute threshold, decrease cluster size by 1.
-			elif(cluster_size > 2 and cluster_size < self.min_absolute_treshold):
+			elif(cluster_size > 2 and cluster_size < self.min_absolute_treshold or
+			 	cluster_size < (total_size * self.min_percentual_treshold)):
+				print('decreasing cluster size!')
 				self.adjust_n_clusters(-1)
 				break
 		
