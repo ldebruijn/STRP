@@ -11,6 +11,10 @@ import numpy as np
 randBinList = lambda n: [randint(0,9) for b in range(1,n+1)]
 
 class PredictionController(object):
+	""" The PredictionController is the managing Class of all the 
+		STRPAlgorithm objects. This Class handles when an algorithm should
+		run and holds the logic to modify an algorithm based on triggers.
+	"""
 
 	def __init__(self):
 		self.n_clusters = 2;

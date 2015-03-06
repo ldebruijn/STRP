@@ -7,6 +7,10 @@ import matplotlib.pyplot as plt
 import random
 
 class STRPAlgorithm(object):
+	""" STRPAlgorithm is a class which olds all the logic behind the 
+		clustering algorithm. All direct interaction with the algorithm
+		is done here.
+	"""
 
 	def __init__(self, n_clusters=10):
 		self.n_clusters = n_clusters
@@ -28,9 +32,9 @@ class STRPAlgorithm(object):
 			Reduce the data to a 2 Dimensional format so that the positions of each node can be read
 			Have the estimator run on the reduced data to get the results we want
 
-			Save the centroids of each cluster
-			Save the node positions (reduced_data)
-			Save the label of each node (which cluster each node belongs to)
+			* Save the centroids of each cluster
+			* Save the node positions (reduced_data)
+			* Save the label of each node (which cluster each node belongs to)
 		"""
 		reduced_data = PCA(n_components=2).fit_transform(data)
 
