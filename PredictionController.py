@@ -6,6 +6,7 @@ from collections import Counter
 
 from random import *
 import numpy as np
+import math
 
 
 randBinList = lambda n: [randint(0,9) for b in range(1,n+1)]
@@ -33,6 +34,8 @@ class PredictionController(object):
 		self.min_absolute_treshold = 5
 		self.max_percentual_treshold = .1
 		self.min_percentual_treshold = .02
+
+		self.entity_temper_percentual_threshold = .2
 
 		self.is_running = False
 
@@ -73,11 +76,10 @@ class PredictionController(object):
 				# Add a new entity to the test data to simulate movement
 				container.append(np.array(randBinList(10)))
 				data = np.asarray(container)
-				
-				self.fuck_with_entities()
 
 				self.algorithms['current'].run(data)
 
+				self.fuck_with_entities()
 				self.check_cluster_sizes()
 
 				last_iteration = datetime.now()
@@ -100,9 +102,19 @@ class PredictionController(object):
 		algorithm = self.algorithms['current']
 		data = algorithm.input_data
 
+		# Determine how many items there should be tempered with depending on dataset size
+		entities_to_fuck_with = int(math.floor(len(algorithm.labels) * self.entity_temper_percentual_threshold))
+
+
+		for x in range(1, entities_to_fuck_with):
+			# Fetch a random item from the entities input data
+			index = randint(0, len(algorithm.labels) - 1)
+			entity = data[index]
+
 		# get number of entities to fuck with
 		# Maybe absolute number + percentual increase as the dataset grows
 		# Fuck with the input data (shift 1 to 0 and vice versa)
+
 
 	def check_cluster_sizes(self):
 		""" Check the amount of nodes in each cluster of the current algorithm
