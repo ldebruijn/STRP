@@ -27,8 +27,8 @@ class PredictionController(object):
 
 		self.max_absolute_treshold = 13
 		self.min_absolute_treshold = 5
-		self.max_percentual_treshold = .5
-		self.min_percentual_treshold = .1
+		self.max_percentual_treshold = .1
+		self.min_percentual_treshold = .02
 
 		self.is_running = False
 
@@ -93,17 +93,28 @@ class PredictionController(object):
 				 the cluster sizes used by the algorithm.
 
 			"""
-			# If a cluster size is greater than the absolute threshold, increase cluster size by 1.
-			if (cluster_size > self.max_absolute_treshold or 
-				cluster_size > (total_size * self.max_percentual_treshold)):
-				print(total_size, (total_size * self.max_percentual_treshold))
+			
+			print(total_size, (self.max_absolute_treshold + (total_size * self.max_percentual_treshold)))
+
+			if (cluster_size > (self.max_absolute_treshold + (total_size * self.max_percentual_treshold))):
+				""" If the cluster size is greater than an absolute threshold and a percentual
+					amount of the total dataset, increase the amount of clusters for all algorithms
+					by 1.
+
+
+				"""
 				print('increasing cluster size!')
 				self.adjust_n_clusters(+1)
 				break
 			
-			# If a cluster size is less than the absolute threshold, decrease cluster size by 1.
-			elif(cluster_size > 2 and cluster_size < self.min_absolute_treshold or
-			 	cluster_size < (total_size * self.min_percentual_treshold)):
+			elif(cluster_size > 2 and 
+				cluster_size < (self.min_absolute_treshold + (total_size * self.min_percentual_treshold))):
+				""" If the cluster size is greater than 2 (we don't allow a cluster size less than 2)
+					And the size of this cluster is smaller than an absolute threshold plus a
+					percentual amount of the total dataset, decrease the amount of clusters for all 
+					algorithms by 1.
+				"""
+				
 				print('decreasing cluster size!')
 				self.adjust_n_clusters(-1)
 				break
