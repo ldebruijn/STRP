@@ -39,8 +39,11 @@ class STRPAlgorithm(object):
 		"""
 		reduced_data = PCA(n_components=2).fit_transform(data)
 
-		self.input_data = data
+		# Run the algorithm
 		self.estimator.fit_transform(reduced_data)
+
+		# Save all relevent properties
+		self.input_data = data
 		self.centroids = self.estimator.cluster_centers_
 		self.node_positions = reduced_data
 		self.labels = self.estimator.labels_
