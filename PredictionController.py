@@ -147,7 +147,7 @@ class PredictionController(object):
 				self.adjust_n_clusters(+1)
 				break
 			
-			elif(cluster_size > 2 and 
+			elif(len(cluster_sizes) > 2 and 
 				cluster_size < (self.min_absolute_treshold + (total_size * self.min_percentual_treshold))):
 				""" If the cluster size is greater than 2 (we don't allow a cluster size less than 2)
 					
