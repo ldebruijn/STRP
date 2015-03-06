@@ -18,6 +18,7 @@ class STRPAlgorithm(object):
 		self.centroids = None 
 		self.node_positions = None
 		self.labels = None
+		self.input_data = None
 
 	def adjust_n_clusters(self, n_clusters):
 		""" Re-initialize the estimator with an adjusted amount of clusters.
@@ -38,6 +39,7 @@ class STRPAlgorithm(object):
 		"""
 		reduced_data = PCA(n_components=2).fit_transform(data)
 
+		self.input_data = data
 		self.estimator.fit_transform(reduced_data)
 		self.centroids = self.estimator.cluster_centers_
 		self.node_positions = reduced_data
@@ -49,7 +51,6 @@ class STRPAlgorithm(object):
 	def visualize(self, reduced_data):
 		""" Visualise the estimation of the algorithm using matplotlib.
 			Fairly standard setup.
-
 		"""
 		# Step size of the mesh. Decrease to increase the quality of the VQ.
 		h = .02     # point in the mesh [x_min, m_max]x[y_min, y_max].
