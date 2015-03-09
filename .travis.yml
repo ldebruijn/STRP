@@ -8,4 +8,4 @@ install:
 - pip install matplotlib
 
 script:
-echo "TODO"
+- echo "TODO"
