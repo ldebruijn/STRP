@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.4"
+
+install:
+- pip install scikit-learn
+- pip install numpy
+- pip install matplotlib
+
+script:
+- echo "TODO"
