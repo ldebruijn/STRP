@@ -3,6 +3,8 @@ STRP Project back-end
 
 This repository holds the back-end for the FHICT Delta STRP project 2015. The logic for the clustering of entities and the behaviour of the entities and clusters is part of the back-end.
 
+[![Build Status](https://travis-ci.org/ldebruijn/STRP.svg?branch=dev)](https://travis-ci.org/ldebruijn/STRP)
+
 Requirements
 ------------
 
