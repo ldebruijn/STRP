@@ -30,6 +30,7 @@ Data Input
 
 The below JSON will be the format in which we receive input data.
 
+```
 { 
 	"profiles" : [
 		{ 
@@ -49,6 +50,7 @@ The below JSON will be the format in which we receive input data.
 		}
 	]
 }
+```
 
 Each entity represents a sensor with it's given output data.
 
