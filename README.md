@@ -28,9 +28,67 @@ ToDo
 Data Input
 ----------
 
-Data input logic has not yet been written.
+The below JSON will be the format in which we receive input data.
+
+{ 
+	"profiles" : [
+		{ 
+		  "1" : true, 
+		  "2" : false,  
+		  "3" : true, 
+		  "4" : false, 
+		  "5" : true, 
+		  "6" : false, 
+		  "7" : false, 
+		  "hb" : 160 , 
+		  "c1" : "ff0000", 
+		  "c1" : "ff0000", 
+		  "c1" : "ff0000", 
+		  "c1" : "ff0000", 
+		  "c1" : "ff0000" 
+		}
+	]
+}
+
+Each entity represents a sensor with it's given output data.
+
 
 Data Output
 -----------
 
-Data output logic has not yet been written.
+The below JSON will be the format in which we output our calculations.
+
+```
+{
+	"timestamp": 1,
+	"nodes": [
+		{
+			"userId": 1,
+			"input_data": [],
+			"cluster": 3,
+			"position": [3, 4]
+		},
+		{
+			"userId": 2,
+			"input_data": [],
+			"cluster": 6,
+			"position": [16, 3]
+		}
+	],
+	"clusters": [ 
+		{
+			"1": [20, 24],
+			"2": [14, 7]
+		}
+	]
+
+}
+```
+
+* The timestamp is incremental and will be used to keep track of the different stages of the ecosystem
+* The `nodes` array will contain all data about an individual node. 
+   * `userId` is a unique identifier of which user the node represents.
+   * the `input_data` contains the data we got as input.
+   * `cluster` is the identifier for which cluster the node belongs to
+   * `position` contains an [x, y] coördinate for the position of the node in the ecosystem
+* `clusters` contains an array with each cluster position. The label represents the cluster number used in the `nodes` data.
