@@ -3,6 +3,7 @@ from STRPAlgorithm import STRPAlgorithm
 from DataProcessor import DataProcessor
 from datetime import datetime, timedelta
 from collections import Counter
+from deepcopy import deepcopy
 
 from random import *
 import numpy as np
@@ -22,12 +23,12 @@ class PredictionController(object):
 
 		self.algorithms = {
 			'current': STRPAlgorithm(self.n_clusters),
-			'buffer': STRPAlgorithm(self.n_clusters)
+			'future': STRPAlgorithm(self.n_clusters)
 		}
 
 		self.data_processors = {
 			'current': DataProcessor(),
-			'buffer': DataProcessor()
+			'future': DataProcessor()
 		}
 
 		self.max_absolute_treshold = 13
@@ -77,12 +78,15 @@ class PredictionController(object):
 				container.append(np.array(randBinList(10)))
 				data = np.asarray(container)
 
-				self.algorithms['current'].run(data)
+				self.algorithms['future'].run(data)
 
 				self.fuck_with_entities()
 				self.check_cluster_sizes()
 
 				last_iteration = datetime.now()
+
+				# Set the last processed algorithm to the buffer
+				self.algorithms['current'] = deepcopy(self.algorithms['future'])
 
 	def fuck_with_entities(self):
 		""" Method to temper with the input data of an algorithm
@@ -99,7 +103,7 @@ class PredictionController(object):
 			This functionality is explicity requested by the Media Designers, need I say more?
 		"""
 
-		algorithm = self.algorithms['current']
+		algorithm = self.algorithms['future']
 		data = algorithm.input_data
 
 		# Determine how many items there should be tempered with depending on dataset size
@@ -123,7 +127,7 @@ class PredictionController(object):
 
 		"""
 
-		algorithm = self.algorithms['current']
+		algorithm = self.algorithms['future']
 		cluster_sizes = Counter(algorithm.labels)
 		total_size = len(self.algorithms['current'].labels)
 
