@@ -2,7 +2,7 @@ import os
 from bottle import Bottle, static_file, run
 
 HERE = os.path.abspath(os.path.dirname(__file__))
-STATIC = os.path.join(HERE, 'static')
+STATIC = os.path.join(HERE, '')
 
 app = Bottle()
 
