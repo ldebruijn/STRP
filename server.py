@@ -1,53 +1,124 @@
-from gevent import monkey; monkey.patch_all()
+import asyncio
+import json
+from autobahn.asyncio.websocket import WebSocketServerProtocol, \
+    WebSocketServerFactory
 
-from socketio import socketio_manage
-from socketio.server import SocketIOServer
-from socketio.namespace import BaseNamespace
-from bottle import Bottle, request
-
-app = Bottle()
-
-class BroadcastMixin(object):
-    """ Mix in this class with your Namespace to have a broadcast event method.
+class BroadcastServerFactory(WebSocketServerFactory):
+    """
+    Simple broadcast server broadcasting any message it receives to all
+    currently connected clients.
     """
 
-    def broadcast_event(self, event, *args):
-        """ This is sent to all in the sockets in this particular Namespace,
-            including itself.
-        """
-        pkt = dict(type="event",
-                   name=event,
-                   args=args,
-                   endpoint=self.ns_name)
+    def __init__(self, url, debug=False, debugCodePaths=False):
+        WebSocketServerFactory.__init__(self, url, debug=debug, debugCodePaths=debugCodePaths)
+        self.clients = []
 
-        for sessid, socket in self.socket.server.sockets.iteritems():
-            socket.send_packet(pkt)
+    def register(self, client):
+        if client not in self.clients:
+            print("registered client {}".format(client.peer))
+            self.clients.append(client)
+
+    def unregister(self, client):
+        if client in self.clients:
+            print("unregistered client {}".format(client.peer))
+            self.clients.remove(client)
+
+    def broadcast(self, data):
+        for c in self.clients:
+            c.sendMessage(data.encode('utf8'))
 
 
-class STRPNamespace(BaseNamespace, BroadcastMixin):
-    """ Namespace for the sockets
+class STRPServerProtocol(WebSocketServerProtocol):
+    """ Server protocol for the sockets
         All socket communication will go through this
     """
 
+    def onConnect(self, request):
+        print("New connection: {0}".format(request.peer))
+
+
+    def onOpen(self):
+        self.factory.register(self)
+
+
+    def connectionLost(self, reason):
+        WebSocketServerProtocol.connectionLost(self, reason)
+        self.factory.unregister(self)
+
+
+    def onMessage(self, payload, isBinary):
+        """ Handles all incoming messages
+        """
+        if isBinary:
+            print("Binary message: {0} bytes".format(len(payload)))
+        else:
+            self.decodePayload(payload)
+
+
+    def decodePayload(self, payload):
+        """ Decode payload implements a socket.io like protocol
+            This will call the handler function based on the message
+        """
+
+        decodedPayload = json.loads(payload.decode('utf8'))
+        message = "on_{0}".format(decodedPayload['message'])
+
+        # Get the method by string, based on the message
+        method = getattr(self, message)
+
+        try:
+            # Run the handler with the data
+            method(decodedPayload['data'])
+        except NameError:
+            pass
+
+
+    def broadcast(self, message, data):
+        """ Broadcasts message to all sockets
+            Uses socket.io like protocol with message
+        """
+        # Create the dict for the data
+        sendableObject = {
+            'message': message,
+            'data': data
+        }
+
+        # Stringify the dict and send it
+        jsonString = json.dumps(sendableObject)
+        self.factory.broadcast(jsonString)
+
+
     def on_new_input_blob(self, data):
-        print 'New input blob: ', data
-        # Do algo magic
-        self.broadcast_event('new_data', data)
+        """ Handles new input blob
+        """
+        print("New input blob: {0}".format(data))
+        # magic
+        self.broadcast('new_blob', data)
 
 
     def on_collision(self, data):
-        print 'Collision', data
-        # Do algo magic
-        self.broadcast_event('new_data', data)
+        """ Handles collision
+        """
+        print("Collision: {0}".format(data))
+        #magic
+        print(data)
 
-
-@app.route('/socket.io/<arg:path>')
-def socketio(*arg, **kw):
-    """ Route to connect a socket
-    """
-    socketio_manage(request.environ, {'': STRPNamespace}, request=request)
-    return "out"
 
 
 if __name__ == '__main__':
-    SocketIOServer(('localhost', 8520), app, policy_server=False).serve_forever()
+    ServerFactory = BroadcastServerFactory
+
+    factory = ServerFactory("ws://localhost:8520", debug=False)
+    factory.protocol = STRPServerProtocol
+
+    loop = asyncio.get_event_loop()
+    coro = loop.create_server(factory, '127.0.0.1', 8520)
+    server = loop.run_until_complete(coro)
+
+    try:
+        loop.run_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.close()
+        loop.close()
