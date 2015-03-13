@@ -70,22 +70,22 @@ class PredictionController(object):
 
 		"""
 
-		if (self.last_iteration < datetime.now() - timedelta(seconds=1)):
-			print('iteration')
+		# if (self.last_iteration < datetime.now() - timedelta(seconds=1)):
+		print('iteration')
 
-			# Add a new entity to the test data to simulate movement
-			self.process_new_node(np.array(randBinList(10)))
-			self.data = np.asarray(self.container)
+		# Add a new entity to the test data to simulate movement
+		self.process_new_node(np.array(randBinList(10)))
+		self.data = np.asarray(self.container)
 
-			self.algorithms['future'].run(self.data)
+		self.algorithms['future'].run(self.data)
 
-			self.fuck_with_entities()
-			self.check_cluster_sizes()
+		self.fuck_with_entities()
+		self.check_cluster_sizes()
 
-			self.last_iteration = datetime.now()
+		self.last_iteration = datetime.now()
 
-			# Set the last processed algorithm to the buffer
-			self.algorithms['current'] = deepcopy(self.algorithms['future'])
+		# Set the last processed algorithm to the buffer
+		self.algorithms['current'] = deepcopy(self.algorithms['future'])
 
 	def fuck_with_entities(self):
 		""" Method to temper with the input data of an algorithm

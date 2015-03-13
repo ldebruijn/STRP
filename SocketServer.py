@@ -32,7 +32,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
         print("New client connected")
 
-        self.callback = PeriodicCallback(self.update_ecosystem, 120)
+        self.callback = PeriodicCallback(self.update_ecosystem, 1000)
         self.callback.start()
         self.write_message("You are connected")
 
