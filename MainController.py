@@ -1,4 +1,6 @@
 from PredictionController import PredictionController
+from server import *
+import threading
 
 class MainController(object):
 	""" The MainController is the top level Class and the highest layer of the
@@ -8,11 +10,14 @@ class MainController(object):
 
 	def __init__(self):
 		self.predictionController = PredictionController()
+		self.socketServer = SocketServer()
 
 	
 
 	def main(self):
-		self.predictionController.loop()
+		print("Initializing Main Controller")
+		self.socketServer.main()
+
 
 
 if __name__ == '__main__':

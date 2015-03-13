@@ -3,7 +3,7 @@ from STRPAlgorithm import STRPAlgorithm
 from DataProcessor import DataProcessor
 from datetime import datetime, timedelta
 from collections import Counter
-from deepcopy import deepcopy
+from copy import deepcopy
 
 from random import *
 import numpy as np
@@ -40,6 +40,16 @@ class PredictionController(object):
 
 		self.is_running = False
 
+		self.container = list()
+		self.last_iteration = datetime.now()
+		print('Application initialised')
+		self.is_running = True
+
+		# Create dummy data
+		for x in range(1, 15):
+			self.container.append(np.array(randBinList(10)))
+
+
 
 	def adjust_n_clusters(self, amount):
 		""" Adjust the number of clusters in each algorithm.
@@ -57,36 +67,26 @@ class PredictionController(object):
 		""" Main application loop.
 
 		"""
-		container = list()
-		last_iteration = datetime.now()
-		print('Application initialised')
-		self.is_running = True
 
-		container.clear()
+		yield from 1
 
-		# Create dummy data
-		for x in range(1, 15):
-			container.append(np.array(randBinList(10)))
+		# if (self.last_iteration < datetime.now() - timedelta(seconds=1)):
+		# 	print('iteration')
 
-		# Main application loop
-		while(self.is_running):
+		# 	# Add a new entity to the test data to simulate movement
+		# 	self.container.append(np.array(randBinList(10)))
+		# 	self.data = np.asarray(container)
 
-			if (last_iteration < datetime.now() - timedelta(seconds=1)):
-				print('iteration')
+		# 	self.algorithms['future'].run(data)
 
-				# Add a new entity to the test data to simulate movement
-				container.append(np.array(randBinList(10)))
-				data = np.asarray(container)
+		# 	self.fuck_with_entities()
+		# 	self.check_cluster_sizes()
 
-				self.algorithms['future'].run(data)
+		# 	self.last_iteration = datetime.now()
 
-				self.fuck_with_entities()
-				self.check_cluster_sizes()
-
-				last_iteration = datetime.now()
-
-				# Set the last processed algorithm to the buffer
-				self.algorithms['current'] = deepcopy(self.algorithms['future'])
+		# 	# Set the last processed algorithm to the buffer
+		# 	self.algorithms['current'] = deepcopy(self.algorithms['future'])
+		# 	return
 
 	def fuck_with_entities(self):
 		""" Method to temper with the input data of an algorithm
