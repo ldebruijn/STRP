@@ -68,25 +68,22 @@ class PredictionController(object):
 
 		"""
 
-		yield from 1
+		if (self.last_iteration < datetime.now() - timedelta(seconds=1)):
+			print('iteration')
 
-		# if (self.last_iteration < datetime.now() - timedelta(seconds=1)):
-		# 	print('iteration')
+			# Add a new entity to the test data to simulate movement
+			self.container.append(np.array(randBinList(10)))
+			self.data = np.asarray(self.container)
 
-		# 	# Add a new entity to the test data to simulate movement
-		# 	self.container.append(np.array(randBinList(10)))
-		# 	self.data = np.asarray(container)
+			self.algorithms['future'].run(self.data)
 
-		# 	self.algorithms['future'].run(data)
+			self.fuck_with_entities()
+			self.check_cluster_sizes()
 
-		# 	self.fuck_with_entities()
-		# 	self.check_cluster_sizes()
+			self.last_iteration = datetime.now()
 
-		# 	self.last_iteration = datetime.now()
-
-		# 	# Set the last processed algorithm to the buffer
-		# 	self.algorithms['current'] = deepcopy(self.algorithms['future'])
-		# 	return
+			# Set the last processed algorithm to the buffer
+			self.algorithms['current'] = deepcopy(self.algorithms['future'])
 
 	def fuck_with_entities(self):
 		""" Method to temper with the input data of an algorithm
@@ -129,7 +126,7 @@ class PredictionController(object):
 
 		algorithm = self.algorithms['future']
 		cluster_sizes = Counter(algorithm.labels)
-		total_size = len(self.algorithms['current'].labels)
+		total_size = len(self.algorithms['future'].labels)
 
 		print(cluster_sizes)
 

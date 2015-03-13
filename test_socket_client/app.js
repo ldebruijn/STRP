@@ -9,7 +9,7 @@ $(document).ready(function () {
         $messages.append($('<li></li>').html(m));
     }
 
-    var sock =new WebSocket("ws://127.0.0.1:8520");
+    var sock =new WebSocket("ws://127.0.0.1:8888");
     sock.binaryType = "arraybuffer";
 
     sock.onopen = function() {

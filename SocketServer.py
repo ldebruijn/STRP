@@ -3,10 +3,15 @@ import tornado.websocket
 import tornado.ioloop
 from tornado.ioloop import PeriodicCallback
 import tornado.web
+from PredictionController import PredictionController
+import os
 
 clients = []
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
+
+    def initialize(self, predictionController):
+        self.predictionController = predictionController
 
     def check_origin(self, origin):
         return True       
@@ -18,14 +23,21 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
         print("New client connected")
 
-        self.callback = PeriodicCallback(self.send_hello, 120)
+        self.callback = PeriodicCallback(self.update_ecosystem, 120)
         self.callback.start()
         self.write_message("You are connected")
 
 
-    def send_hello(self):
-        print('hello')
-        self.write_message('hello')
+    def update_ecosystem(self):
+        self.predictionController.loop()
+        algorithm = self.predictionController.algorithms['current']
+        centroids = algorithm.centroids
+        node_positions = algorithm.node_positions
+        labels = algorithm.labels
+
+        print(centroids)
+        print('Ecosystem Update')
+        self.write_message('Ecosystem Update')
 
     def on_message(self, message):
         self.write_message(message)
@@ -38,13 +50,17 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
         self.callback.stop()
 
-    
-
 application = tornado.web.Application([
-    (r'/', SocketHandler),
+    (r'/', SocketHandler, dict(predictionController=PredictionController())),
 ])
 
-if __name__ == "__main__":
+def main(predictionController=None):
+    # if (not predictionController):
+    #     predictionController = PredictionController()
+
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
+
+if __name__ == "__main__":
+    main()
