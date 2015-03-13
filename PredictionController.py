@@ -41,6 +41,9 @@ class PredictionController(object):
 		self.is_running = False
 
 		self.container = list()
+		self.processed_nodes = list()
+		self.raw_data = list()
+
 		self.last_iteration = datetime.now()
 		print('Application initialised')
 		self.is_running = True
@@ -51,7 +54,9 @@ class PredictionController(object):
 
 
 	def process_new_node(self, data):
-		self.container.append(data)
+		tranformed_data = self.data_processors['current'].transform_input_data(data)
+		self.raw_data.append(data)
+		self.processed_nodes(tranformed_data)
 
 	def adjust_n_clusters(self, amount):
 		""" Adjust the number of clusters in each algorithm.
@@ -65,7 +70,7 @@ class PredictionController(object):
 			value.adjust_n_clusters(self.n_clusters)
 
 
-	def loop(self):
+	def process(self):
 		""" Main application loop.
 
 		"""
