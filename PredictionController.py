@@ -50,6 +50,8 @@ class PredictionController(object):
 			self.container.append(np.array(randBinList(10)))
 
 
+	def process_new_node(self, data):
+		self.container.append(data)
 
 	def adjust_n_clusters(self, amount):
 		""" Adjust the number of clusters in each algorithm.
@@ -72,7 +74,7 @@ class PredictionController(object):
 			print('iteration')
 
 			# Add a new entity to the test data to simulate movement
-			self.container.append(np.array(randBinList(10)))
+			self.process_new_node(np.array(randBinList(10)))
 			self.data = np.asarray(self.container)
 
 			self.algorithms['future'].run(self.data)

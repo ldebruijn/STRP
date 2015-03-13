@@ -9,7 +9,6 @@ class MainController(object):
 	"""
 
 	def __init__(self):
-		self.predictionController = PredictionController()
 		self.socketServer = SocketServer()
 
 	

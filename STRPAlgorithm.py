@@ -49,7 +49,7 @@ class STRPAlgorithm(object):
 		self.labels = self.estimator.labels_
 
 		# Enable visualising when debugging
-		self.visualize(reduced_data)
+		# self.visualize(reduced_data)
 
 	def visualize(self, reduced_data):
 		""" Visualise the estimation of the algorithm using matplotlib.
