@@ -54,7 +54,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         response = ResponseBuilder.build_json(timestamp, centroids, input_data, node_positions, labels)
         timestamp += 1
 
-        print('Ecosystem Update', response)
+        # print('Ecosystem Update', response)
         self.write_message('Ecosystem Update: %s ' % response)
 
     def on_message(self, message):

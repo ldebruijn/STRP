@@ -1,5 +1,5 @@
 from PredictionController import PredictionController
-from server import *
+import SocketServer
 import threading
 
 class MainController(object):
@@ -9,13 +9,12 @@ class MainController(object):
 	"""
 
 	def __init__(self):
-		self.socketServer = SocketServer()
-
+		pass
 	
 
 	def main(self):
 		print("Initializing Main Controller")
-		self.socketServer.main()
+		SocketServer.main()
 
 
 
