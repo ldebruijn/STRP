@@ -14,7 +14,7 @@ import uuid
 randBinList = lambda n: [randint(0,9) for b in range(1,n+1)]
 
 class PredictionController(object):
-	""" The PredictionController is the managing Class of all the 
+	""" The PredictionController is the managing Class of all the
 		STRPAlgorithm objects. This Class handles when an algorithm should
 		run and holds the logic to modify an algorithm based on triggers.
 	"""
@@ -51,18 +51,20 @@ class PredictionController(object):
 
 		# Create dummy data
 		for x in range(1, 15):
-			self.container.append(np.array(randBinList(10)))
+			self.processed_nodes.append(np.array(randBinList(9)))
 
 
 	def process_new_node(self, data):
 		""" Process a new node. Transform the data into a runnable format for our algorithm
-			Add a universal unique identifier to the node. 
+			Add a universal unique identifier to the node.
 			Save the raw data and the transformed data.
 		"""
 		tranformed_data = self.data_processors['current'].transform_input_data(data)
 		data['userId'] = uuid.uuid4()
+		print(tranformed_data)
 		self.raw_data.append(data)
 		self.processed_nodes.append(tranformed_data)
+		print('processed', self.processed_nodes)
 
 	def adjust_n_clusters(self, amount):
 		""" Adjust the number of clusters in each algorithm.
@@ -86,7 +88,7 @@ class PredictionController(object):
 
 		# Add a new entity to the test data to simulate movement
 		# self.process_new_node(np.array(randBinList(10)))
-		self.data = np.asarray(self.container)
+		self.data = np.asarray(self.processed_nodes)
 
 		self.algorithms['future'].run(self.data)
 
@@ -100,14 +102,14 @@ class PredictionController(object):
 
 	def fuck_with_entities(self):
 		""" Method to temper with the input data of an algorithm
-			To keep the ecosystem dynamic, there has to be some movement 
+			To keep the ecosystem dynamic, there has to be some movement
 			from the nodes between all clusters.
 
 			To achieve this, we periodically temper with the input data of a(n) (set of)
-			entities. 
+			entities.
 
 			To have enough of a dynamic ecosystem with both a small and large dataset
-			we have a threshold which has both an absolute value and is based on a percentual 
+			we have a threshold which has both an absolute value and is based on a percentual
 			amount of the total dataset.
 
 			This functionality is explicity requested by the Media Designers, need I say more?
@@ -132,7 +134,7 @@ class PredictionController(object):
 
 	def check_cluster_sizes(self):
 		""" Check the amount of nodes in each cluster of the current algorithm
-			If the amount of nodes in a specific cluster is greater or less than a specific 
+			If the amount of nodes in a specific cluster is greater or less than a specific
 			threshold, the amount of clusters on all algorithms will be adjusted.
 
 		"""
@@ -149,7 +151,7 @@ class PredictionController(object):
 				 the cluster sizes used by the algorithm.
 
 			"""
-			
+
 			print(total_size, (self.max_absolute_treshold + (total_size * self.max_percentual_treshold)))
 
 			if (cluster_size > (self.max_absolute_treshold + (total_size * self.max_percentual_treshold))):
@@ -160,17 +162,16 @@ class PredictionController(object):
 				print('increasing cluster size!')
 				self.adjust_n_clusters(+1)
 				break
-			
-			elif(len(cluster_sizes) > 2 and 
+
+			elif(len(cluster_sizes) > 2 and
 				cluster_size < (self.min_absolute_treshold + (total_size * self.min_percentual_treshold))):
 				""" If the cluster size is greater than 2 (we don't allow a cluster size less than 2)
-					
+
 					And the size of this cluster is smaller than an absolute threshold plus a
-					percentual amount of the total dataset, decrease the amount of clusters for all 
+					percentual amount of the total dataset, decrease the amount of clusters for all
 					algorithms by 1.
 				"""
-				
+
 				print('decreasing cluster size!')
 				self.adjust_n_clusters(-1)
 				break
-		

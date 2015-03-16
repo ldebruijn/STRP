@@ -8,13 +8,13 @@ class DataProcessor(object):
 
 		try:
 			data = data['profiles']
-			transform.append(data["1"])
-			transform.append(data["2"])
-			transform.append(data["3"])
-			transform.append(data["4"])
-			transform.append(data["5"])
-			transform.append(data["6"])
-			transform.append(data["7"])
+			transform.append(1 if data["1"] else 0)
+			transform.append(1 if data["2"] else 0)
+			transform.append(1 if data["3"] else 0)
+			transform.append(1 if data["5"] else 0)
+			transform.append(1 if data["4"] else 0)
+			transform.append(1 if data["6"] else 0)
+			transform.append(1 if data["7"] else 0)
 			transform.append(int(data["hb"]) % 10)
 			transform.append(int(data["c1"], 16))
 			# transform.append(int(data["c2"], 16))
