@@ -4,8 +4,11 @@ import tornado.ioloop
 from tornado.ioloop import PeriodicCallback
 import tornado.web
 from PredictionController import PredictionController
+
 from ResponseBuilder import ResponseBuilder
+
 import os
+import json
 
 clients = []
 timestamp = 1
@@ -43,7 +46,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         """
         global timestamp
 
-        self.predictionController.loop()
+        self.predictionController.process()
         algorithm = self.predictionController.algorithms['current']
         
         centroids = algorithm.centroids
@@ -60,8 +63,14 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         """ Handler for all messages received by the client
         """
-        # self.predictionController.
-        self.write_message(message)
+        if (message is None):
+            return
+
+        convert = json.loads(message)
+        self.predictionController.process_new_node(message)
+
+
+        self.write_message(json.dumps({ message: "success" }))
 
     def on_close(self):
         """ Gracefully close the connections to the clients and let them know they are disconnected.
@@ -78,13 +87,10 @@ application = tornado.web.Application([
     (r'/', SocketHandler, dict(predictionController=PredictionController())),
 ])
 
-def main(predictionController=None):
-    # if (not predictionController):
-    #     predictionController = PredictionController()
-
+def main():
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
