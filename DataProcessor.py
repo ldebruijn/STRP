@@ -7,6 +7,7 @@ class DataProcessor(object):
 		transform = list()
 
 		try:
+			data = data['profiles']
 			transform.append(data["1"])
 			transform.append(data["2"])
 			transform.append(data["3"])
@@ -15,11 +16,11 @@ class DataProcessor(object):
 			transform.append(data["6"])
 			transform.append(data["7"])
 			transform.append(int(data["hb"]) % 10)
-			transform.append(int(data["c1"]))
-			transform.append(int(data["c2"]))
-			transform.append(int(data["c3"]))
-			transform.append(int(data["c4"]))
-			transform.append(int(data["c5"]))
+			transform.append(int(data["c1"], 16))
+			# transform.append(int(data["c2"], 16))
+			# transform.append(int(data["c3"], 16))
+			# transform.append(int(data["c4"], 16))
+			# transform.append(int(data["c5"], 16))
 		except (KeyError):
 			print("Key does not exist")
 

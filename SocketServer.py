@@ -24,12 +24,12 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.predictionController = predictionController
 
     def check_origin(self, origin):
-        return True       
+        return True
 
     def open(self, *args):
-        """ Open a connection to the client, save their socket connection and 
+        """ Open a connection to the client, save their socket connection and
             let them know they are connected
-        """ 
+        """
         if self not in clients:
             clients.append(self)
 
@@ -37,7 +37,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
         self.callback = PeriodicCallback(self.update_ecosystem, 1000)
         self.callback.start()
-        self.write_message("You are connected")
+        # self.write_message("You are connected")
 
 
     def update_ecosystem(self):
@@ -48,7 +48,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
         self.predictionController.process()
         algorithm = self.predictionController.algorithms['current']
-        
+
         centroids = algorithm.centroids
         node_positions = algorithm.node_positions
         labels = algorithm.labels
@@ -58,7 +58,9 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         timestamp += 1
 
         # print('Ecosystem Update', response)
-        self.write_message('Ecosystem Update: %s ' % response)
+        for con in clients:
+            con.write_message(response)
+
 
     def on_message(self, message):
         """ Handler for all messages received by the client
@@ -67,7 +69,9 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             return
 
         convert = json.loads(message)
-        self.predictionController.process_new_node(message)
+        convert = json.loads(convert)
+        print(type(convert))
+        self.predictionController.process_new_node(convert)
 
 
         self.write_message(json.dumps({ message: "success" }))
@@ -75,7 +79,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def on_close(self):
         """ Gracefully close the connections to the clients and let them know they are disconnected.
         """
-        self.write_message('You are disconnected')
+        # self.write_message('You are disconnected')
 
         if self in clients:
             clients.remove(self)

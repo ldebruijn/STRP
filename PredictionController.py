@@ -62,7 +62,7 @@ class PredictionController(object):
 		tranformed_data = self.data_processors['current'].transform_input_data(data)
 		data['userId'] = uuid.uuid4()
 		self.raw_data.append(data)
-		self.processed_nodes(tranformed_data)
+		self.processed_nodes.append(tranformed_data)
 
 	def adjust_n_clusters(self, amount):
 		""" Adjust the number of clusters in each algorithm.
