@@ -8,6 +8,7 @@ from copy import deepcopy
 from random import *
 import numpy as np
 import math
+import uuid
 
 
 randBinList = lambda n: [randint(0,9) for b in range(1,n+1)]
@@ -54,7 +55,12 @@ class PredictionController(object):
 
 
 	def process_new_node(self, data):
+		""" Process a new node. Transform the data into a runnable format for our algorithm
+			Add a universal unique identifier to the node. 
+			Save the raw data and the transformed data.
+		"""
 		tranformed_data = self.data_processors['current'].transform_input_data(data)
+		data['userId'] = uuid.uuid4()
 		self.raw_data.append(data)
 		self.processed_nodes(tranformed_data)
 
@@ -79,7 +85,7 @@ class PredictionController(object):
 		print('iteration')
 
 		# Add a new entity to the test data to simulate movement
-		self.process_new_node(np.array(randBinList(10)))
+		# self.process_new_node(np.array(randBinList(10)))
 		self.data = np.asarray(self.container)
 
 		self.algorithms['future'].run(self.data)

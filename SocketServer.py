@@ -70,7 +70,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.predictionController.process_new_node(message)
 
 
-        self.write_message(json.dumps({ message: "success" })
+        self.write_message(json.dumps({ message: "success" }))
 
     def on_close(self):
         """ Gracefully close the connections to the clients and let them know they are disconnected.
@@ -87,13 +87,10 @@ application = tornado.web.Application([
     (r'/', SocketHandler, dict(predictionController=PredictionController())),
 ])
 
-def main(predictionController=None):
-    # if (not predictionController):
-    #     predictionController = PredictionController()
-
+def main():
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
