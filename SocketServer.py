@@ -57,7 +57,6 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         response = ResponseBuilder.build_json(timestamp, centroids, input_data, node_positions, labels)
         timestamp += 1
 
-        # print('Ecosystem Update', response)
         for con in clients:
             con.write_message(response)
 
@@ -96,5 +95,3 @@ def main():
     http_server.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
 
-# if __name__ == "__main__":
-#     main()
