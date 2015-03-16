@@ -80,8 +80,6 @@ class PredictionController(object):
 		""" Main application loop.
 
 		"""
-
-		# if (self.last_iteration < datetime.now() - timedelta(seconds=1)):
 		print('iteration')
 
 		# Add a new entity to the test data to simulate movement
@@ -124,10 +122,6 @@ class PredictionController(object):
 			# Fetch a random item from the entities input data
 			index = randint(0, len(algorithm.labels) - 1)
 			entity = data[index]
-
-		# get number of entities to fuck with
-		# Maybe absolute number + percentual increase as the dataset grows
-		# Fuck with the input data (shift 1 to 0 and vice versa)
 
 
 	def check_cluster_sizes(self):
