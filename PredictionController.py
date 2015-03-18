@@ -4,6 +4,7 @@ from DataProcessor import DataProcessor
 from datetime import datetime, timedelta
 from collections import Counter
 from copy import deepcopy
+from pythonosc import osc_message_builder, udp_client
 
 from random import *
 import numpy as np
@@ -12,6 +13,11 @@ import uuid
 
 
 randBinList = lambda n: [randint(0,9) for b in range(1,n+1)]
+
+FILTER_NEW_BLOB = '/newBlob'
+FILTER_INCREASE_CLUSTER = '/increaseCluster'
+FILTER_DECREASE_CLUSTER = '/decreaseCluster'
+
 
 class PredictionController(object):
 	""" The PredictionController is the managing Class of all the
@@ -45,6 +51,9 @@ class PredictionController(object):
 		self.processed_nodes = list()
 		self.raw_data = list()
 
+		self.client = udp_client.UDPClient('localhost', 8000)
+
+
 		self.last_iteration = datetime.now()
 		print('Application initialised')
 		self.is_running = True
@@ -54,11 +63,18 @@ class PredictionController(object):
 			self.processed_nodes.append(np.array(randBinList(9)))
 
 
+	def send_OSC_message(self, address):
+		msg = self.osc_message_builder.OscMessageBuilder(address=address)
+		msg.add_arg(100)
+		msg = msg.builder()
+		self.client.send(msg)
+
 	def process_new_node(self, data):
 		""" Process a new node. Transform the data into a runnable format for our algorithm
 			Add a universal unique identifier to the node.
 			Save the raw data and the transformed data.
 		"""
+		self.send_OSC_message(FILTER_NEW_BLOB)
 		tranformed_data = self.data_processors['current'].transform_input_data(data)
 		data['userId'] = uuid.uuid4()
 		self.raw_data.append(data)
@@ -152,6 +168,7 @@ class PredictionController(object):
 				"""
 				print('increasing cluster size!')
 				self.adjust_n_clusters(+1)
+				self.send_OSC_message(FILTER_INCREASE_CLUSTER)
 				break
 
 			elif(len(cluster_sizes) > 2 and
@@ -165,4 +182,5 @@ class PredictionController(object):
 
 				print('decreasing cluster size!')
 				self.adjust_n_clusters(-1)
+				self.send_OSC_message(FILTER_DECREASE_CLUSTER)
 				break
