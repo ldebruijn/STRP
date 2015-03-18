@@ -17,6 +17,7 @@ randBinList = lambda n: [randint(0,9) for b in range(1,n+1)]
 FILTER_NEW_BLOB = '/newBlob'
 FILTER_INCREASE_CLUSTER = '/increaseCluster'
 FILTER_DECREASE_CLUSTER = '/decreaseCluster'
+MAX_CLUSTERS = 300
 start_data = [ 
     {
         'profiles': {
@@ -104,6 +105,10 @@ class PredictionController(object):
 			Add a universal unique identifier to the node.
 			Save the raw data and the transformed data.
 		"""
+		if (len(self.raw_data) >= MAX_CLUSTERS):
+			self.raw_data.pop(0)
+			self.processed_nodes.pop(0)
+
 		self.send_OSC_message(FILTER_NEW_BLOB)
 		tranformed_data = self.data_processors['current'].transform_input_data(data)
 		data['profiles']['userId'] = str(uuid.uuid4())
