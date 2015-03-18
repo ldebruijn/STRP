@@ -85,7 +85,7 @@ The below JSON will be the format in which we output our calculations.
 ```
 {
 	"timestamp": 1,
-	"userId": "<UUID>"
+	"newestNode": "<UUID>"
 	"nodes": [
 		{
 			"userId": "<UUID>",
