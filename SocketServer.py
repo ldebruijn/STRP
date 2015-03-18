@@ -11,7 +11,7 @@ import os
 import json
 
 clients = []
-timestamp = 1
+timestamp = 0
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
     """ SocketHandler class which handles the communication with the socket layer
@@ -56,6 +56,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
         response = ResponseBuilder.build_json(timestamp, centroids, input_data, node_positions, labels, newNode)
         timestamp += 1
+
+        print('Ecosystem update %s' % timestamp)
 
         for con in clients:
             con.write_message(response)

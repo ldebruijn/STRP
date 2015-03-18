@@ -85,15 +85,16 @@ The below JSON will be the format in which we output our calculations.
 ```
 {
 	"timestamp": 1,
+	"userId": "<UUID>"
 	"nodes": [
 		{
-			"userId": 1,
+			"userId": "<UUID>",
 			"input_data": [],
 			"cluster": 3,
 			"position": [3, 4]
 		},
 		{
-			"userId": 2,
+			"userId": "<UUID>",
 			"input_data": [],
 			"cluster": 6,
 			"position": [16, 3]
