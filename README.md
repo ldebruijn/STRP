@@ -29,7 +29,7 @@ ToDo
 ----
 
 * ~~Wait for the input group to determine what their input to us will look like~~
-* Tansform input to a format which yields the best results for our algorithm
+* Transform input to a format which yields the best results for our algorithm
 * Temper with the input data every now and then to simulate a living ecosystem
 * ~~Have a buffer of algorithms where each buffer item represents a state in the ecosystem. This buffer will be used to allow the front-end to simulate movement for entities between two states.~~
 * ~~Output the results of our algorithm somewhere.~~

@@ -35,8 +35,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
         print("New client connected")
 
-        self.callback = PeriodicCallback(self.update_ecosystem, 1000)
-        self.callback.start()
+        # self.callback = PeriodicCallback(self.update_ecosystem, 1000)
+        # self.callback.start()
         # self.write_message("You are connected")
 
 
@@ -72,8 +72,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         print(type(convert))
         self.predictionController.process_new_node(convert)
 
-
-        self.write_message(json.dumps({ message: "success" }))
+        self.update_ecosystem()
+        # self.write_message(json.dumps({ message: "success" }))
 
     def on_close(self):
         """ Gracefully close the connections to the clients and let them know they are disconnected.
