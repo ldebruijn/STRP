@@ -9,10 +9,12 @@ Requirements
 ------------
 
 To run this project, the following software and libraries are required:
-* Python 3.x
+* Python 3.4.2
 * Scikit Learn 0.15
 * Numpy 1.9.1
 * MatPlotLib 1.4.3
+* Tornado Web 4.2
+* python-osc 1.4.2
 
 How to use
 ----------
@@ -31,6 +33,7 @@ ToDo
 * Temper with the input data every now and then to simulate a living ecosystem
 * ~~Have a buffer of algorithms where each buffer item represents a state in the ecosystem. This buffer will be used to allow the front-end to simulate movement for entities between two states.~~
 * ~~Output the results of our algorithm somewhere.~~
+
 
 OSC Controll
 ------------
