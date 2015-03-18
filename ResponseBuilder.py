@@ -34,6 +34,7 @@ class ResponseBuilder(object):
 		"""
 		response = dict()
 		response['timestamp'] = timestamp
+		print(input_data)
 		response['newestNode'] = newNode
 		nodes = list()
 
