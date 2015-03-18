@@ -83,7 +83,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         if self in clients:
             clients.remove(self)
 
-        self.callback.stop()
+        # self.callback.stop()
 
 
 application = tornado.web.Application([
