@@ -40,7 +40,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         # self.write_message("You are connected")
 
 
-    def update_ecosystem(self):
+    def update_ecosystem(self, newNode):
         """ To simulate a living ecosystem we periodically send updates to the connected clients
             This method handles the processed data, converts it to the output format and updates the clients
         """
@@ -54,7 +54,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         labels = algorithm.labels
         input_data = algorithm.input_data
 
-        response = ResponseBuilder.build_json(timestamp, centroids, input_data, node_positions, labels)
+        response = ResponseBuilder.build_json(timestamp, centroids, input_data, node_positions, labels, newNode)
         timestamp += 1
 
         for con in clients:
@@ -70,9 +70,9 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         convert = json.loads(message)
         convert = json.loads(convert)
         print(type(convert))
-        self.predictionController.process_new_node(convert)
+        newNode = self.predictionController.process_new_node(convert)
 
-        self.update_ecosystem()
+        self.update_ecosystem(newNode)
         # self.write_message(json.dumps({ message: "success" }))
 
     def on_close(self):

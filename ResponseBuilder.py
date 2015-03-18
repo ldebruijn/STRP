@@ -3,7 +3,7 @@ import json
 class ResponseBuilder(object):
 
 	@staticmethod
-	def build_json(timestamp, centroids, input_data, positions, labels):
+	def build_json(timestamp, centroids, input_data, positions, labels, newNode):
 		"""
 			Build a json according to the below format based on the input given.
 
@@ -34,6 +34,7 @@ class ResponseBuilder(object):
 		"""
 		response = dict()
 		response['timestamp'] = timestamp
+		response['newestNode'] = newNode
 		nodes = list()
 
 		for i, n in enumerate(positions):

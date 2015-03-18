@@ -79,6 +79,7 @@ class PredictionController(object):
 		data['userId'] = uuid.uuid4()
 		self.raw_data.append(data)
 		self.processed_nodes.append(tranformed_data)
+		return data['userId']
 
 	def adjust_n_clusters(self, amount):
 		""" Adjust the number of clusters in each algorithm.
