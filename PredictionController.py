@@ -17,7 +17,36 @@ randBinList = lambda n: [randint(0,9) for b in range(1,n+1)]
 FILTER_NEW_BLOB = '/newBlob'
 FILTER_INCREASE_CLUSTER = '/increaseCluster'
 FILTER_DECREASE_CLUSTER = '/decreaseCluster'
-MAX_NODES = 300
+start_data = [ 
+    {
+        'profiles': {
+            '6': True, 
+            'hb': 85, 
+            '1': True, 
+            'userId': 'ac44b0d2-2253-482b-b458-bafc0ad04045', 
+            '3': True, 
+            '2': True, 
+            '7': True, 
+            '5': True, 
+            'c1': 'FAAB11', 
+            '4': True
+        }
+    },
+    {
+        'profiles': {
+            '6': False, 
+            'hb': 79, 
+            '1': True, 
+            'userId': 'bbb57860-042b-4f95-9337-756c1e9595c5', 
+            '3': True, 
+            '2': True, 
+            '7': True, 
+            '5': True, 
+            'c1': '3d4499', 
+            '4': False
+        }
+    }
+]
 
 
 class PredictionController(object):
@@ -50,7 +79,7 @@ class PredictionController(object):
 
 		self.container = list()
 		self.processed_nodes = list()
-		self.raw_data = list()
+		self.raw_data = start_data
 
 		self.client = udp_client.UDPClient('localhost', 8000)
 
@@ -60,7 +89,7 @@ class PredictionController(object):
 		self.is_running = True
 
 		# Create dummy data
-		for x in range(1, 15):
+		for x in range(1, 3):
 			self.processed_nodes.append(np.array(randBinList(9)))
 
 
@@ -75,15 +104,12 @@ class PredictionController(object):
 			Add a universal unique identifier to the node.
 			Save the raw data and the transformed data.
 		"""
-		if (len(self.processed_nodes) >= MAX_NODES):
-			self.processed_nodes.pop(0)
-
 		self.send_OSC_message(FILTER_NEW_BLOB)
 		tranformed_data = self.data_processors['current'].transform_input_data(data)
-		data['userId'] = str(uuid.uuid4())
+		data['profiles']['userId'] = str(uuid.uuid4())
 		self.raw_data.append(data)
 		self.processed_nodes.append(tranformed_data)
-		return data['userId']
+		return data['profiles']['userId']
 
 	def adjust_n_clusters(self, amount):
 		""" Adjust the number of clusters in each algorithm.
@@ -107,7 +133,7 @@ class PredictionController(object):
 		# Add a new entity to the test data to simulate movement
 		self.data = np.asarray(self.processed_nodes)
 
-		self.algorithms['future'].run(self.data)
+		self.algorithms['current'].run(self.data)
 
 		self.fuck_with_entities()
 		self.check_cluster_sizes()
@@ -115,7 +141,7 @@ class PredictionController(object):
 		self.last_iteration = datetime.now()
 
 		# Set the last processed algorithm to the buffer
-		self.algorithms['current'] = deepcopy(self.algorithms['future'])
+		self.algorithms['current'] = deepcopy(self.algorithms['current'])
 
 	def fuck_with_entities(self):
 		""" Method to temper with the input data of an algorithm
@@ -132,7 +158,7 @@ class PredictionController(object):
 			This functionality is explicity requested by the Media Designers, need I say more?
 		"""
 
-		algorithm = self.algorithms['future']
+		algorithm = self.algorithms['current']
 		data = algorithm.input_data
 
 		# Determine how many items there should be tempered with depending on dataset size
@@ -151,9 +177,9 @@ class PredictionController(object):
 
 		"""
 
-		algorithm = self.algorithms['future']
+		algorithm = self.algorithms['current']
 		cluster_sizes = Counter(algorithm.labels)
-		total_size = len(self.algorithms['future'].labels)
+		total_size = len(self.algorithms['current'].labels)
 
 		print(cluster_sizes)
 

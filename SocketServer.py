@@ -12,6 +12,37 @@ import json
 
 clients = []
 timestamp = 0
+start_data = [ 
+    {
+        'profiles': {
+            '6': True, 
+            'hb': 85, 
+            '1': True, 
+            'userId': 'ac44b0d2-2253-482b-b458-bafc0ad04045', 
+            '3': True, 
+            '2': True, 
+            '7': True, 
+            '5': True, 
+            'c1': 'FAAB11', 
+            '4': True
+        }
+    },
+    {
+        'profiles': {
+            '6': False, 
+            'hb': 79, 
+            '1': True, 
+            'userId': 'bbb57860-042b-4f95-9337-756c1e9595c5', 
+            '3': True, 
+            '2': True, 
+            '7': True, 
+            '5': True, 
+            'c1': '3d4499', 
+            '4': False
+        }
+    }
+]
+
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
     """ SocketHandler class which handles the communication with the socket layer
@@ -52,7 +83,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         centroids = algorithm.centroids
         node_positions = algorithm.node_positions
         labels = algorithm.labels
-        input_data = algorithm.input_data
+        input_data = self.predictionController.raw_data
 
         response = ResponseBuilder.build_json(timestamp, centroids, input_data, node_positions, labels, newNode)
         timestamp += 1
