@@ -65,9 +65,9 @@ class PredictionController(object):
 
 
 	def send_OSC_message(self, address):
-		msg = self.osc_message_builder.OscMessageBuilder(address=address)
+		msg = osc_message_builder.OscMessageBuilder(address=address)
 		msg.add_arg(100)
-		msg = msg.builder()
+		msg = msg.build()
 		self.client.send(msg)
 
 	def process_new_node(self, data):
