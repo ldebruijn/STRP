@@ -102,7 +102,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
         convert = json.loads(message)
         convert = json.loads(convert)
-        print(type(convert))
+        
         newNode = self.predictionController.process_new_node(convert)
 
         self.update_ecosystem(newNode)
