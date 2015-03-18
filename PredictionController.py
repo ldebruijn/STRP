@@ -3,17 +3,24 @@ from STRPAlgorithm import STRPAlgorithm
 from DataProcessor import DataProcessor
 from datetime import datetime, timedelta
 from collections import Counter
-from deepcopy import deepcopy
+from copy import deepcopy
+from pythonosc import osc_message_builder, udp_client
 
 from random import *
 import numpy as np
 import math
+import uuid
 
 
 randBinList = lambda n: [randint(0,9) for b in range(1,n+1)]
 
+FILTER_NEW_BLOB = '/newBlob'
+FILTER_INCREASE_CLUSTER = '/increaseCluster'
+FILTER_DECREASE_CLUSTER = '/decreaseCluster'
+
+
 class PredictionController(object):
-	""" The PredictionController is the managing Class of all the 
+	""" The PredictionController is the managing Class of all the
 		STRPAlgorithm objects. This Class handles when an algorithm should
 		run and holds the logic to modify an algorithm based on triggers.
 	"""
@@ -40,6 +47,39 @@ class PredictionController(object):
 
 		self.is_running = False
 
+		self.container = list()
+		self.processed_nodes = list()
+		self.raw_data = list()
+
+		self.client = udp_client.UDPClient('localhost', 8000)
+
+
+		self.last_iteration = datetime.now()
+		print('Application initialised')
+		self.is_running = True
+
+		# Create dummy data
+		for x in range(1, 15):
+			self.processed_nodes.append(np.array(randBinList(9)))
+
+
+	def send_OSC_message(self, address):
+		msg = self.osc_message_builder.OscMessageBuilder(address=address)
+		msg.add_arg(100)
+		msg = msg.builder()
+		self.client.send(msg)
+
+	def process_new_node(self, data):
+		""" Process a new node. Transform the data into a runnable format for our algorithm
+			Add a universal unique identifier to the node.
+			Save the raw data and the transformed data.
+		"""
+		self.send_OSC_message(FILTER_NEW_BLOB)
+		tranformed_data = self.data_processors['current'].transform_input_data(data)
+		data['userId'] = uuid.uuid4()
+		self.raw_data.append(data)
+		self.processed_nodes.append(tranformed_data)
+		return data['userId']
 
 	def adjust_n_clusters(self, amount):
 		""" Adjust the number of clusters in each algorithm.
@@ -53,51 +93,36 @@ class PredictionController(object):
 			value.adjust_n_clusters(self.n_clusters)
 
 
-	def loop(self):
+	def process(self):
 		""" Main application loop.
 
 		"""
-		container = list()
-		last_iteration = datetime.now()
-		print('Application initialised')
-		self.is_running = True
 
-		container.clear()
+		print('iteration')
 
-		# Create dummy data
-		for x in range(1, 15):
-			container.append(np.array(randBinList(10)))
+		# Add a new entity to the test data to simulate movement
+		self.data = np.asarray(self.processed_nodes)
 
-		# Main application loop
-		while(self.is_running):
+		self.algorithms['future'].run(self.data)
 
-			if (last_iteration < datetime.now() - timedelta(seconds=1)):
-				print('iteration')
+		self.fuck_with_entities()
+		self.check_cluster_sizes()
 
-				# Add a new entity to the test data to simulate movement
-				container.append(np.array(randBinList(10)))
-				data = np.asarray(container)
+		self.last_iteration = datetime.now()
 
-				self.algorithms['future'].run(data)
-
-				self.fuck_with_entities()
-				self.check_cluster_sizes()
-
-				last_iteration = datetime.now()
-
-				# Set the last processed algorithm to the buffer
-				self.algorithms['current'] = deepcopy(self.algorithms['future'])
+		# Set the last processed algorithm to the buffer
+		self.algorithms['current'] = deepcopy(self.algorithms['future'])
 
 	def fuck_with_entities(self):
 		""" Method to temper with the input data of an algorithm
-			To keep the ecosystem dynamic, there has to be some movement 
+			To keep the ecosystem dynamic, there has to be some movement
 			from the nodes between all clusters.
 
 			To achieve this, we periodically temper with the input data of a(n) (set of)
-			entities. 
+			entities.
 
 			To have enough of a dynamic ecosystem with both a small and large dataset
-			we have a threshold which has both an absolute value and is based on a percentual 
+			we have a threshold which has both an absolute value and is based on a percentual
 			amount of the total dataset.
 
 			This functionality is explicity requested by the Media Designers, need I say more?
@@ -115,21 +140,16 @@ class PredictionController(object):
 			index = randint(0, len(algorithm.labels) - 1)
 			entity = data[index]
 
-		# get number of entities to fuck with
-		# Maybe absolute number + percentual increase as the dataset grows
-		# Fuck with the input data (shift 1 to 0 and vice versa)
-
-
 	def check_cluster_sizes(self):
 		""" Check the amount of nodes in each cluster of the current algorithm
-			If the amount of nodes in a specific cluster is greater or less than a specific 
+			If the amount of nodes in a specific cluster is greater or less than a specific
 			threshold, the amount of clusters on all algorithms will be adjusted.
 
 		"""
 
 		algorithm = self.algorithms['future']
 		cluster_sizes = Counter(algorithm.labels)
-		total_size = len(self.algorithms['current'].labels)
+		total_size = len(self.algorithms['future'].labels)
 
 		print(cluster_sizes)
 
@@ -139,7 +159,7 @@ class PredictionController(object):
 				 the cluster sizes used by the algorithm.
 
 			"""
-			
+
 			print(total_size, (self.max_absolute_treshold + (total_size * self.max_percentual_treshold)))
 
 			if (cluster_size > (self.max_absolute_treshold + (total_size * self.max_percentual_treshold))):
@@ -149,18 +169,19 @@ class PredictionController(object):
 				"""
 				print('increasing cluster size!')
 				self.adjust_n_clusters(+1)
+				self.send_OSC_message(FILTER_INCREASE_CLUSTER)
 				break
-			
-			elif(len(cluster_sizes) > 2 and 
+
+			elif(len(cluster_sizes) > 2 and
 				cluster_size < (self.min_absolute_treshold + (total_size * self.min_percentual_treshold))):
 				""" If the cluster size is greater than 2 (we don't allow a cluster size less than 2)
-					
+
 					And the size of this cluster is smaller than an absolute threshold plus a
-					percentual amount of the total dataset, decrease the amount of clusters for all 
+					percentual amount of the total dataset, decrease the amount of clusters for all
 					algorithms by 1.
 				"""
-				
+
 				print('decreasing cluster size!')
 				self.adjust_n_clusters(-1)
+				self.send_OSC_message(FILTER_DECREASE_CLUSTER)
 				break
-		

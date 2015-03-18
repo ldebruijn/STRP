@@ -9,20 +9,42 @@ Requirements
 ------------
 
 To run this project, the following software and libraries are required:
-* Python 3.x
+* Python 3.4.2
 * Scikit Learn 0.15
 * Numpy 1.9.1
 * MatPlotLib 1.4.3
+* Tornado Web 4.2
+* python-osc 1.4.2
+
+How to use
+----------
+
+* Navigate to the `/STRP` folder and install the required packages. (For our setup, this will already be done).
+* Hold shift while right clicking in the folder, this will give you the option to select `Open command window here`.
+* type `python MainController.py`. This will start the program.
+* You're done. (Don't be an idiot and close the terminal)
 
 
 ToDo
 ----
 
-* Wait for the input group to determine what their input to us will look like
+* ~~Wait for the input group to determine what their input to us will look like~~
 * Transform input to a format which yields the best results for our algorithm
 * Temper with the input data every now and then to simulate a living ecosystem
-* Have a buffer of algorithms where each buffer item represents a state in the ecosystem. This buffer will be used to allow the front-end to simulate movement for entities between two states.
-* Output the results of our algorithm somewhere.
+* ~~Have a buffer of algorithms where each buffer item represents a state in the ecosystem. This buffer will be used to allow the front-end to simulate movement for entities between two states.~~
+* ~~Output the results of our algorithm somewhere.~~
+
+
+OSC Controll
+------------
+
+For controlling lighting we use OSC. The following addresses will be used to sent messages based on different events:
+
+`/newBlob` will be triggered whenever a new blob is added to the ecosystem
+`/increaseClusters` will be triggered whenever the ecosystem will be expanded by 1 cluster
+`/decreaseClusters` will be triggered whenever te ecosystem will be decreased by 1 cluster
+
+The lighting behaviour will be decided on the server side of the OSC setup.
 
 
 Data Input
