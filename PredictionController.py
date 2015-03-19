@@ -18,7 +18,7 @@ FILTER_NEW_BLOB = '/newBlob'
 FILTER_INCREASE_CLUSTER = '/increaseCluster'
 FILTER_DECREASE_CLUSTER = '/decreaseCluster'
 MAX_CLUSTERS = 300
-start_data = [ 
+START_DATA = [ 
     {
         'profiles': {
             '6': True, 
@@ -90,7 +90,7 @@ class PredictionController(object):
 		self.is_running = True
 
 		# Create dummy data
-		for i, d in enumerate(start_data):
+		for i, d in enumerate(START_DATA):
 			transformed_data = self.data_processors['current'].transform_input_data(d)
 			self.processed_nodes.append(transformed_data)
 
