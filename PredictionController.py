@@ -18,6 +18,8 @@ FILTER_NEW_BLOB = '/newBlob'
 FILTER_INCREASE_CLUSTER = '/increaseCluster'
 FILTER_DECREASE_CLUSTER = '/decreaseCluster'
 MAX_CLUSTERS = 300
+OSC_SERVER = '10.0.0.8'
+
 start_data = [ 
     {
         'profiles': {
@@ -82,7 +84,7 @@ class PredictionController(object):
 		self.processed_nodes = list()
 		self.raw_data = start_data
 
-		self.client = udp_client.UDPClient('localhost', 8000)
+		self.client = udp_client.UDPClient(OSC_SERVER, 8000)
 
 
 		self.last_iteration = datetime.now()
