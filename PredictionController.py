@@ -82,7 +82,7 @@ class PredictionController(object):
 
 		self.container = list()
 		self.processed_nodes = list()
-		self.raw_data = start_data
+		self.raw_data = list()
 
 		self.client = udp_client.UDPClient(OSC_SERVER, 8000)
 
@@ -92,8 +92,9 @@ class PredictionController(object):
 		self.is_running = True
 
 		# Create dummy data
-		for x in range(1, 3):
-			self.processed_nodes.append(np.array(randBinList(9)))
+		for i, d in enumerate(start_data):
+			transformed_data = self.data_processors['current'].transform_input_data(d)
+			self.processed_nodes.append(transformed_data)
 
 
 	def send_OSC_message(self, address):
