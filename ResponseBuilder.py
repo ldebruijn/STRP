@@ -39,8 +39,8 @@ class ResponseBuilder(object):
 
 		for i, n in enumerate(positions):
 			node = dict()
-			node['userId'] = '1'
-			node['input_data'] = [int(x) for x in input_data[i]]
+			node['userId'] = input_data[i]['profiles']['userId']
+			node['input_data'] = input_data[i]
 			node['cluster'] = int(labels[i])
 			node['position'] = list((float(x) for x in n))
 
